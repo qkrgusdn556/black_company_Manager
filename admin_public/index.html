@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 대시보드</title>
+    <link rel="stylesheet" href="style_admin.css">
+</head>
+<body>
+<div style="text-align: left; padding-bottom: 10px; border-bottom: 1px solid #ddd; margin-bottom: 20px;">
+        <span style="font-weight: bold; color: #333;">접속자: ADMIN</span> | 
+        <span class="system-status">● Online</span>
+    </div>
+
+    <h1 style="text-align: left;"> BLACK COMPANY : DASHBOARD</h1>
+
+
+
+    <div class="container">
+        
+        <div class="panel">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2> 최근 공지사항</h2>
+                <a href="notice_form.html" class="action-btn"> 공지 작성</a>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>제목</th>
+                        <th>날짜</th>
+                     <th style="width: 80px;">관리</th> </tr>
+                </thead>
+                 <tbody id="notice-list"></tbody>
+            </table>
+        </div>
+
+        <div class="panel">
+            <h2> 신규 지원서 (이력서 다운로드)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>정보</th>
+                        <th>연락처</th>
+                        <th>이력서</th>
+                    </tr>
+                </thead>
+                <tbody id="applicant-list"></tbody>
+            </table>
+        </div>
+
+        <div class="panel">
+            <h2> 고객 문의함</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>보낸이</th>
+                        <th>제목(내용 일부)</th>
+                        <th>날짜</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody id="inquiry-list"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+    // 1. 목록 그리기 함수
+    function renderList(data) {
+      const listContainer = document.getElementById('notice-list');
+      listContainer.innerHTML = ''; 
+
+      if (!data || data.length === 0) {
+        listContainer.innerHTML = '<div class="message">검색 결과가 없습니다.</div>';
+        return;
+      }
+
+      data.forEach(notice => {
+        // 날짜 처리 로직
+        const rawDate = notice.date || notice.created_at; 
+        let dateStr = '날짜 없음';
+
+        if (rawDate) {
+            try {
+                dateStr = new Date(rawDate).toISOString().split('T')[0];
+            } catch (e) {
+                dateStr = rawDate;
+            }
+        }
+
+        const itemHTML = `
+          <div class="notice-item">
+            <a href="notice_view.html?id=${notice.id}">
+              <div class="notice-title">${notice.title}</div>
+              <div class="notice-date">${dateStr}</div>
+            </a>
+          </div>
+        `;
+        listContainer.innerHTML += itemHTML;
+      });
+    }
+
+    // [추가] 공지사항 삭제 함수
+    function deleteNotice(id) {
+        if (!confirm("정말 이 공지사항을 삭제하시겠습니까?")) return;
+
+        fetch(`/api/admin/notices/${id}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(() => {
+                alert("삭제되었습니다.");
+                loadNotices(); // 목록 새로고침
+            })
+            .catch(() => alert("삭제 실패 (서버 오류)"));
+    }
+
+        // 2. 지원자 목록 불러오기
+        function loadApplicants() {
+            fetch('/api/applicants')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('applicant-list');
+                    tbody.innerHTML = '';
+                    data.forEach(app => {
+                        const downloadUrl = `/download/${app.resume_file}`;
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${app.name}</td>
+                                <td>${app.age}세 / ${app.gender}</td>
+                                <td>${app.phone_number}</td>
+                                <td><a href="${downloadUrl}" class="download-btn"> 다운로드</a></td>
+                            </tr>`;
+                    });
+                });
+        }
+
+        // 3. 문의사항 목록 불러오기 (상세보기 링크 추가)
+        function loadInquiries() {
+            fetch('/api/admin/inquiries')
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('inquiry-list');
+                    tbody.innerHTML = '';
+                    data.forEach(inq => {
+                        const date = new Date(inq.created_at || inq.sent_at || Date.now()).toLocaleDateString();
+                        // 상세보기 페이지로 이동 (ID를 달고 감)
+                        const detailUrl = `inquiry_detail.html?id=${inq.id}`;
+                        
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${inq.name}</td>
+                                <td>${inq.message.substring(0, 15)}...</td>
+                                <td class="date-col">${date}</td>
+                                <td><a href="${detailUrl}" class="action-btn-small"> 상세</a></td>
+                            </tr>`;
+                    });
+                });
+        }
+
+        window.onload = function() {
+            loadNotices();
+            loadApplicants();
+            loadInquiries();
+        };
+    </script>
+</body>
+</html>

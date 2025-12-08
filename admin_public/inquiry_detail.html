@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>문의 상세 보기</title>
+    <link rel="stylesheet" href="style_admin.css">
+    <style>
+        .detail-box { max-width: 700px; margin: 40px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .meta-info { border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; color: #555; }
+        .message-body { font-size: 1.1em; line-height: 1.6; min-height: 200px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+    <div class="detail-box">
+        <h2 id="page-title">문의 상세 내용</h2>
+        
+        <div class="meta-info">
+            <p><strong>보낸 사람:</strong> <span id="sender">로딩 중...</span></p>
+            <p><strong>이메일:</strong> <span id="email">-</span></p>
+            <p><strong>받은 날짜:</strong> <span id="date">-</span></p>
+        </div>
+
+        <div class="message-body" id="message">
+            내용을 불러오는 중입니다...
+        </div>
+
+        <button onclick="location.href='index.html'" style="margin-top: 30px;">목록으로 돌아가기</button>
+    </div>
+
+    <script>
+        // 주소창의 ?id=값 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const inquiryId = urlParams.get('id');
+
+        if(inquiryId) {
+            fetch(`/api/admin/inquiries/${inquiryId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.error) {
+                        alert("존재하지 않는 글입니다.");
+                        location.href = 'index.html';
+                        return;
+                    }
+                    document.getElementById('sender').innerText = data.name;
+                    document.getElementById('email').innerText = data.email;
+                    document.getElementById('date').innerText = new Date(data.created_at || data.sent_at).toLocaleString();
+                    document.getElementById('message').innerText = data.message;
+                })
+                .catch(err => alert("데이터 로드 실패"));
+        } else {
+            alert("잘못된 접근입니다.");
+            location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

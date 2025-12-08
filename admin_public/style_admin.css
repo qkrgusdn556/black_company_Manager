@@ -1,0 +1,143 @@
+@charset "utf-8";
+
+/* 전체 기본 폰트 및 배경 설정 */
+body { 
+    font-family: 'Noto Sans KR', sans-serif; 
+    background-color: #ffffff; 
+    margin: 0; 
+    padding: 20px; 
+}
+
+/* 제목 스타일 */
+h1 { 
+    text-align: center; 
+    color: #333; 
+    margin-bottom: 30px; 
+}
+
+/* 시스템 상태 텍스트 (정상 가동 중) */
+.system-status { 
+    color: green; 
+    font-weight: bold; 
+}
+
+/* 레이아웃 컨테이너 (그리드) */
+.container { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    display: grid; 
+    gap: 20px; 
+}
+
+/* 흰색 패널 박스 디자인 */
+.panel { 
+    background: white; 
+    padding: 20px; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+}
+
+/* 패널 내부 제목 */
+h2 { 
+    margin-top: 0; 
+    border-bottom: 2px solid #eee; 
+    padding-bottom: 10px; 
+    color: #555; 
+}
+
+/* 입력창 스타일 (공지사항 등) */
+input, textarea { 
+    width: 100%; 
+    padding: 10px; 
+    margin-bottom: 10px; 
+    border: 1px solid #ddd; 
+    border-radius: 4px; 
+    box-sizing: border-box; 
+}
+
+/* 버튼 스타일 */
+button { 
+    background-color: #333; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    width: 100%; 
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+button:hover { 
+    background-color: #555; 
+}
+
+/* 테이블 스타일 */
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 10px; 
+}
+
+th, td { 
+    padding: 12px; 
+    text-align: left; 
+    border-bottom: 1px solid #ddd; 
+    font-size: 14px; 
+}
+
+th { 
+    background-color: #f8f9fa; 
+    font-weight: bold; 
+    color: #444;
+}
+
+/* [다운로드] 버튼 스타일 */
+.download-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.download-btn:hover { 
+    background-color: #0056b3; 
+}
+
+/* 날짜 등 부가 정보 텍스트 */
+.date-col { 
+    color: #888; 
+    font-size: 12px; 
+}
+
+/* --- 추가된 스타일 --- */
+
+/* 액션 버튼 (글쓰기 등) */
+.action-btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #28a745; /* 녹색 */
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+}
+.action-btn:hover { background-color: #218838; }
+
+/* 작은 액션 버튼 (상세보기 등) */
+.action-btn-small {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: #6c757d; /* 회색 */
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 12px;
+}
+.action-btn-small:hover { background-color: #5a6268; }

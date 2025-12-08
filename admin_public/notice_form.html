@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항 작성</title>
+    <link rel="stylesheet" href="style_admin.css">
+    <style>
+        .form-container { max-width: 600px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; margin-bottom: 20px; }
+        label { font-weight: bold; display: block; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>📢 공지사항 작성</h2>
+        <input type="text" id="title" placeholder="공지 제목을 입력하세요">
+        <textarea id="content" rows="10" placeholder="공지 내용을 입력하세요"></textarea>
+        
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button onclick="submitNotice()">등록하기</button>
+            <button onclick="location.href='index.html'" style="background-color: #666;">취소 / 돌아가기</button>
+        </div>
+    </div>
+
+    <script>
+        function submitNotice() {
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+
+            if(!title || !content) return alert("제목과 내용을 모두 입력해주세요.");
+
+            fetch('/api/admin/notices', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, content })
+            })
+            .then(res => res.json())
+            .then(() => {
+                alert("공지사항이 등록되었습니다.");
+                location.href = 'index.html'; // 등록 후 메인으로 이동
+            })
+            .catch(() => alert("등록 실패"));
+        }
+    </script>
+</body>
+</html>
