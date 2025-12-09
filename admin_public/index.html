@@ -100,6 +100,30 @@
         listContainer.innerHTML += itemHTML;
       });
     }
+// 1) 공지사항 불러오기
+function loadNotices() {
+    fetch('/api/admin/notices')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('notice-list');
+            tbody.innerHTML = '';
+
+            data.forEach(notice => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><a href="notice_view.html?id=${notice.id}">${notice.title}</a></td>
+                        <td>${new Date(notice.created_at || notice.date).toLocaleDateString()}</td>
+                        <td>
+                            <button onclick="deleteNotice(${notice.id})" class="btn-delete">
+                                삭제
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => console.error('공지사항 로드 실패:', err));
+}
 
     // [추가] 공지사항 삭제 함수
     function deleteNotice(id) {
