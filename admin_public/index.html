@@ -66,66 +66,36 @@
     </div>
 
     <script>
-    // 1. 목록 그리기 함수
-    function renderList(data) {
-      const listContainer = document.getElementById('notice-list');
-      listContainer.innerHTML = ''; 
+    // 1. 공지사항 목록 불러오기 (수정됨)
+    function loadNotices() {
+        fetch('/api/admin/notices')
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('notice-list');
+                tbody.innerHTML = '';
+                
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center">공지사항이 없습니다.</td></tr>';
+                    return;
+                }
 
-      if (!data || data.length === 0) {
-        listContainer.innerHTML = '<div class="message">검색 결과가 없습니다.</div>';
-        return;
-      }
-
-      data.forEach(notice => {
-        // 날짜 처리 로직
-        const rawDate = notice.date || notice.created_at; 
-        let dateStr = '날짜 없음';
-
-        if (rawDate) {
-            try {
-                dateStr = new Date(rawDate).toISOString().split('T')[0];
-            } catch (e) {
-                dateStr = rawDate;
-            }
-        }
-
-        const itemHTML = `
-          <div class="notice-item">
-            <a href="notice_view.html?id=${notice.id}">
-              <div class="notice-title">${notice.title}</div>
-              <div class="notice-date">${dateStr}</div>
-            </a>
-          </div>
-        `;
-        listContainer.innerHTML += itemHTML;
-      });
-    }
-// 1) 공지사항 불러오기
-function loadNotices() {
-    fetch('/api/admin/notices')
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.getElementById('notice-list');
-            tbody.innerHTML = '';
-
-            data.forEach(notice => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><a href="notice_view.html?id=${notice.id}">${notice.title}</a></td>
-                        <td>${new Date(notice.created_at || notice.date).toLocaleDateString()}</td>
-                        <td>
-                            <button onclick="deleteNotice(${notice.id})" class="btn-delete">
-                                삭제
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                data.forEach(n => {
+                    const date = new Date(n.created_at || Date.now()).toLocaleDateString();
+                    
+                    // [삭제] 버튼 추가
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${n.title}</td>
+                            <td class="date-col">${date}</td>
+                            <td>
+                                <button onclick="deleteNotice(${n.id})" class="delete-btn"> 삭제</button>
+                            </td>
+                        </tr>`;
+                });
             });
-        })
-        .catch(err => console.error('공지사항 로드 실패:', err));
-}
+    }
 
-    // [추가] 공지사항 삭제 함수
+    //  공지사항 삭제 함수
     function deleteNotice(id) {
         if (!confirm("정말 이 공지사항을 삭제하시겠습니까?")) return;
 
