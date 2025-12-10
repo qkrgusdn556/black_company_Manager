@@ -52,11 +52,11 @@ const connectDB = () => {
 };
 connectDB();
 
-// MongoDB 연결
+// MongoDB연결
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('🍃 MongoDB Atlas 연결 성공!'))
     .catch(err => console.error('❌ MongoDB 실패:', err));
-햣
+
 
 // MongoDB Schema
 const ResumeImageSchema = new mongoose.Schema({
